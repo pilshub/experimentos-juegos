@@ -15,7 +15,9 @@
   a.card:hover{transform:translateY(-2px);border-color:#8fa0ff}
   .card .tit{font-weight:800;font-size:1.05rem;color:#ffe08a}
   .card .desc{font-size:.85rem;color:#aab6c8;margin-top:6px}
-  .card .ver{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:8px;background:#3a4a6b;font-size:.75rem;color:#dce7ff}
+  .card .modelo{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:8px;background:#3a4a6b;font-size:.75rem;color:#dce7ff}
+  .card .modelo.sol{background:#5b3f7a;color:#f0dcff}
+  .card .modelo.luna{background:#2f5b7f;color:#d6ecff}
   .nota{background:#2c3550;border:1px solid #4a5a80;border-radius:12px;padding:12px;margin-top:18px;color:#b9c5dc;font-size:.85rem}
   details.como{background:#1d2432;border:1px solid #36445f;border-radius:12px;padding:12px 14px;margin-top:12px;color:#cdd8ea;font-size:.85rem}
   details.como summary{cursor:pointer;font-weight:800;color:#ffe08a}
@@ -31,39 +33,41 @@
 
 <div class="seccion">Batalla de variantes — elige un diseño (A o B)</div>
 <div class="grid">
-  <a class="card" href="games/bug-hunt/A/index.html"><div class="tit">Bug Hunt</div><div class="desc">Esquiva y recoge — v. A</div><div class="ver">Jugar A</div></a>
-  <a class="card" href="games/bug-hunt/B/index.html"><div class="tit">Bug Hunt</div><div class="desc">Esquiva y recoge — v. B</div><div class="ver">Jugar B</div></a>
-  <a class="card" href="games/circuit/A/index.html"><div class="tit">Circuito</div><div class="desc">Mosaico de circuitos — v. A</div><div class="ver">Jugar A</div></a>
-  <a class="card" href="games/circuit/B/index.html"><div class="tit">Circuito</div><div class="desc">Mosaico de circuitos — v. B</div><div class="ver">Jugar B</div></a>
-  <a class="card" href="games/feature-upgrade/A/index.html"><div class="tit">Reacción del Señal</div><div class="desc">Máquina de reacción — v. A</div><div class="ver">Jugar A</div></a>
-  <a class="card" href="games/feature-upgrade/B/index.html"><div class="tit">Reacción del Señal</div><div class="desc">Entrenamiento de reacción — v. B</div><div class="ver">Jugar B</div></a>
-  <a class="card" href="games/orbit/A/index.html"><div class="tit">Órbita</div><div class="desc">Repartidor orbital — v. A</div><div class="ver">Jugar A</div></a>
-  <a class="card" href="games/orbit/B/index.html"><div class="tit">Órbita</div><div class="desc">Repartidor orbital — v. B</div><div class="ver">Jugar B</div></a>
-  <a class="card" href="games/pulse/A/index.html"><div class="tit">Pulso</div><div class="desc">Detén el pulso — v. A</div><div class="ver">Jugar A</div></a>
-  <a class="card" href="games/pulse/B/index.html"><div class="tit">Pulso</div><div class="desc">Detén el pulso — v. B</div><div class="ver">Jugar B</div></a>
+  <a class="card" href="games/bug-hunt/A/index.html"><div class="tit">Bug Hunt</div><div class="desc">Esquiva y recoge</div><div class="modelo solab">v. A · Sol</div></a>
+  <a class="card" href="games/bug-hunt/B/index.html"><div class="tit">Bug Hunt</div><div class="desc">Esquiva y recoge</div><div class="modelo luna">v. B · Luna</div></a>
+  <a class="card" href="games/circuit/A/index.html"><div class="tit">Circuito</div><div class="desc">Mosaico de circuitos</div><div class="modelo solab">v. A · Sol</div></a>
+  <a class="card" href="games/circuit/B/index.html"><div class="tit">Circuito</div><div class="desc">Mosaico de circuitos</div><div class="modelo luna">v. B · Luna</div></a>
+  <a class="card" href="games/feature-upgrade/A/index.html"><div class="tit">Reacción del Señal</div><div class="desc">Máquina de reacción</div><div class="modelo solab">v. A · Sol</div></a>
+  <a class="card" href="games/feature-upgrade/B/index.html"><div class="tit">Reacción del Señal</div><div class="desc">Entrenamiento de reacción</div><div class="modelo luna">v. B · Luna</div></a>
+  <a class="card" href="games/orbit/A/index.html"><div class="tit">Órbita</div><div class="desc">Repartidor orbital</div><div class="modelo solab">v. A · Sol</div></a>
+  <a class="card" href="games/orbit/B/index.html"><div class="tit">Órbita</div><div class="desc">Repartidor orbital</div><div class="modelo luna">v. B · Luna</div></a>
+  <a class="card" href="games/pulse/A/index.html"><div class="tit">Pulso</div><div class="desc">Detén el pulso</div><div class="modelo solab">v. A · Sol</div></a>
+  <a class="card" href="games/pulse/B/index.html"><div class="tit">Pulso</div><div class="desc">Detén el pulso</div><div class="modelo luna">v. B · Luna</div></a>
 </div>
 
-<div class="seccion">A era medieval</div>
+<div class="seccion">Era medieval</div>
 <div class="grid">
-  <a class="card" href="games/medieval-1/index.html"><div class="tit">Medieval Realms I</div><div class="desc">Suite táctica — versión 1</div><div class="ver">Jugar</div></a>
-  <a class="card" href="games/medieval-2/index.html"><div class="tit">Emberward I</div><div class="desc">Tres pruebas de estrategia — v1</div><div class="ver">Jugar</div></a>
-  <a class="card" href="games/medieval-manual/index.html"><div class="tit">Emberward Manual</div><div class="desc">Tres pruebas — versión a mano</div><div class="ver">Jugar</div></a>
+  <a class="card" href="games/medieval-1/index.html"><div class="tit">Medieval Realms I</div><div class="desc">Suite táctica — versión 1</div><div class="modelo">1 ejecutor</div></a>
+  <a class="card" href="games/medieval-2/index.html"><div class="tit">Emberward I</div><div class="desc">Tres pruebas de estrategia</div><div class="modelo">2 ejecutores en equipo</div></a>
+  <a class="card" href="games/medieval-manual/index.html"><div class="tit">Emberward Manual</div><div class="desc">Tres pruebas — versión a mano</div><div class="modelo">2 ejecutores a mano</div></a>
 </div>
 
-<div class="nota"><b>Nota:</b> Cada duplicado (A/B) parte de la misma mecánica pero fue generado por un ejecutor distinto; compáralos en jugabilidad, física y pulido. Los récords se guardan en cada navegador.</div>
+<div class="nota"><b>Nota:</b> Cada par (A/B) parte de la misma spec, resuelta por un ejecutor distinto para comparar jugabilidad, física y pulido. El duelo medieval compara formas de trabajar (uno solo vs. equipo). Récords en el navegador.</div>
 
 <details class="como">
-  <summary>📋 Cómo se hizo cada juego (detalle técnico)</summary>
-  <p>Estos juegos salieron de un <b>benchmark de ejecutores de código</b> (lanzado el 25 jul 2026): cuatro ejecutores distintos recibieron la misma spec por tarea, cada uno construyó su versión en su propio directorio, y un verificador externo puntuó el resultado (victoria real, reinicio, interfaz estable, sin errores). Cada par/triada que ves aquí es <b>la misma spec resuelta por gente distinta</b>, para comparar jugabilidad y pulido.</p>
+  <summary>📋 Cómo se hizo cada juego (detalle)</summary>
+  <p>Este hub se montó con juegos que salieron de dos experimentos internos de <b>benchmark de ejecutores de código</b>:</p>
+  <p><b>1) Comparativa de ejecutores (25 jul 2026).</b> Cuatro ejecutores distintos recibieron la <b>misma spec</b> por cada mecánica (Orbit, Circuit, Pulse...), cada uno en su propio directorio aislado, y un verificador externo puntuó victoria real, reinicio limpio, interfaz estable y cero errores. Los pares que ves aquí son las versiones de <b>Ejecutor "Sol" (v. A)</b> y <b>Ejecutor "Luna" (v. B)</b> para la misma tarea.</p>
+  <p><b>2) Duelo medieval (26 jul).</b> Un pack de tres pruebas tácticas con la misma premisa entregada a dos configuraciones: <b>v.1 → un solo ejecutor</b>; <b>v.2 → un ejecutor + un planificador en equipo</b>; <b>v.3 → la edición "a mano"</b> con planificador + ejecutor colaborando paso a paso.</p>
   <table>
-    <tr><th>Juego</th><th>Versión A</th><th>Versión B</th><th>Versión C</th><th>Versión D</th></tr>
-    <tr><td>Bug Hunt</td><td>V4 Pro · 140s · $0.01</td><td>V4 Flash · 136s · $0.01</td><td>Sol · 243s · $0.57</td><td>Luna · 126s · $0.06</td></tr>
-    <tr><td>Circuito</td><td>V4 Pro · 616s · $0.06</td><td>Sol · 297s · $0.57</td><td>Luna · 199s · $0.11</td><td>V4 Flash · 312s · $0.01</td></tr>
-    <tr><td>Reacción del Señal</td><td>Luna · 148s · $0.07</td><td>V4 Flash · 116s · $0.01</td><td>V4 Pro · 252s · $0.02</td><td>Sol · 255s · $0.56</td></tr>
-    <tr><td>Órbita</td><td>V4 Flash · 229s · $0.01</td><td>Luna · 363s · $0.11</td><td>V4 Pro · 227s · $0.02</td><td>Sol · 412s · $0.68</td></tr>
-    <tr><td>Pulso</td><td>Luna · 158s · $0.07</td><td>Sol · 333s · $0.70</td><td>V4 Flash · 120s · $0.01</td><td>V4 Pro · 290s · $0.03</td></tr>
+    <tr><th>Juego</th><th>v. A</th><th>v. B</th></tr>
+    <tr><td>Bug Hunt</td><td>Sol</td><td>Luna</td></tr>
+    <tr><td>Circuito</td><td>Sol</td><td>Luna</td></tr>
+    <tr><td>Reacción del Señal</td><td>Sol</td><td>Luna</td></tr>
+    <tr><td>Órbita</td><td>Sol</td><td>Luna</td></tr>
+    <tr><td>Pulso</td><td>Sol</td><td>Luna</td></tr>
   </table>
-  <p><b>Medieval Realms</b> y <b>Emberward</b> fueron un <b>duelo específico posterior</b> (26 jul): la misma premisa de "mini-juegos de táctica medieval" entregada a dos configuraciones distintas del ejecutor, cada una en su repo (una variante con un único razonador, otra con un par razonador+ejecutor colaborando a mano).</p>
+  <p>Para los costes históricos (duración y € de cada variante según la tanda de comparison completa, incluido DeepSeek V4 Pro / V4 Flash), ver el registro interno en el repo local — no se publica por privacidad.</p>
 </details>
 </body>
 </html>
