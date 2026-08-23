@@ -17,6 +17,12 @@
   .card .desc{font-size:.85rem;color:#aab6c8;margin-top:6px}
   .card .ver{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:8px;background:#3a4a6b;font-size:.75rem;color:#dce7ff}
   .nota{background:#2c3550;border:1px solid #4a5a80;border-radius:12px;padding:12px;margin-top:18px;color:#b9c5dc;font-size:.85rem}
+  details.como{background:#1d2432;border:1px solid #36445f;border-radius:12px;padding:12px 14px;margin-top:12px;color:#cdd8ea;font-size:.85rem}
+  details.como summary{cursor:pointer;font-weight:800;color:#ffe08a}
+  details.como table{width:100%;border-collapse:collapse;margin-top:10px}
+  details.como th,details.como td{border:1px solid #36445f;padding:6px 8px;text-align:left;font-size:.82rem}
+  details.como th{background:#28344d;color:#ffe08a}
+  details.como p{margin:8px 0}
 </style>
 </head>
 <body>
@@ -45,5 +51,19 @@
 </div>
 
 <div class="nota"><b>Nota:</b> Cada duplicado (A/B) parte de la misma mecánica pero fue generado por un ejecutor distinto; compáralos en jugabilidad, física y pulido. Los récords se guardan en cada navegador.</div>
+
+<details class="como">
+  <summary>📋 Cómo se hizo cada juego (detalle técnico)</summary>
+  <p>Estos juegos salieron de un <b>benchmark de ejecutores de código</b> (lanzado el 25 jul 2026): cuatro ejecutores distintos recibieron la misma spec por tarea, cada uno construyó su versión en su propio directorio, y un verificador externo puntuó el resultado (victoria real, reinicio, interfaz estable, sin errores). Cada par/triada que ves aquí es <b>la misma spec resuelta por gente distinta</b>, para comparar jugabilidad y pulido.</p>
+  <table>
+    <tr><th>Juego</th><th>Versión A</th><th>Versión B</th><th>Versión C</th><th>Versión D</th></tr>
+    <tr><td>Bug Hunt</td><td>V4 Pro · 140s · $0.01</td><td>V4 Flash · 136s · $0.01</td><td>Sol · 243s · $0.57</td><td>Luna · 126s · $0.06</td></tr>
+    <tr><td>Circuito</td><td>V4 Pro · 616s · $0.06</td><td>Sol · 297s · $0.57</td><td>Luna · 199s · $0.11</td><td>V4 Flash · 312s · $0.01</td></tr>
+    <tr><td>Reacción del Señal</td><td>Luna · 148s · $0.07</td><td>V4 Flash · 116s · $0.01</td><td>V4 Pro · 252s · $0.02</td><td>Sol · 255s · $0.56</td></tr>
+    <tr><td>Órbita</td><td>V4 Flash · 229s · $0.01</td><td>Luna · 363s · $0.11</td><td>V4 Pro · 227s · $0.02</td><td>Sol · 412s · $0.68</td></tr>
+    <tr><td>Pulso</td><td>Luna · 158s · $0.07</td><td>Sol · 333s · $0.70</td><td>V4 Flash · 120s · $0.01</td><td>V4 Pro · 290s · $0.03</td></tr>
+  </table>
+  <p><b>Medieval Realms</b> y <b>Emberward</b> fueron un <b>duelo específico posterior</b> (26 jul): la misma premisa de "mini-juegos de táctica medieval" entregada a dos configuraciones distintas del ejecutor, cada una en su repo (una variante con un único razonador, otra con un par razonador+ejecutor colaborando a mano).</p>
+</details>
 </body>
 </html>
