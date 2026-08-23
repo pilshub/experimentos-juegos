@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101826">
+  <title>Emberward — three strategy trials</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <main id="main" class="app-shell">
+    <section id="menuView" aria-labelledby="suite-title">
+      <header class="site-header">
+        <a href="#" class="brand" id="brandLink"><span class="brand-mark" aria-hidden="true">✦</span><span>Emberward / field trials</span></a>
+        <div class="header-note">Three disciplines · one realm</div>
+      </header>
+      <div class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">A compact strategy suite</div>
+          <h1 id="suite-title">Hold the line.<br><em>Shape the legend.</em></h1>
+          <p>Three original trials for commanders who trust timing, adaptation, and the people behind the walls. Every choice leaves a mark.</p>
+        </div>
+        <div class="hero-sigil" aria-label="A four-pointed ember sigil">
+          <div class="sigil-caption">The Emberward covenant</div>
+        </div>
+      </div>
+      <div class="section-head"><div><div class="eyebrow">Choose your discipline</div><h2>Three ways to be remembered</h2></div><p>Best records are kept on this device.</p></div>
+      <div class="game-grid">
+        <article class="game-card card-siege">
+          <div><div class="card-art" aria-hidden="true"><i></i></div><div class="card-kicker">Trial I · Precision</div><h3>Castle Siege</h3><p>Read the wind, charge the arm, and turn a stubborn wall into a story worth telling.</p></div>
+          <div class="card-footer"><div class="best-record">Best record<strong id="best-castle">—</strong></div><button class="play-button" data-game="castle" type="button">Enter trial <span aria-hidden="true">↗</span></button></div>
+        </article>
+        <article class="game-card card-village">
+          <div><div class="card-art" aria-hidden="true"><i></i></div><div class="card-kicker">Trial II · Stewardship</div><h3>Village Defense</h3><p>Turn a handful of workers into a living answer to the next wave. Build wisely, repair early.</p></div>
+          <div class="card-footer"><div class="best-record">Best record<strong id="best-village">—</strong></div><button class="play-button" data-game="village" type="button">Enter trial <span aria-hidden="true">↗</span></button></div>
+        </article>
+        <article class="game-card card-banner">
+          <div><div class="card-art" aria-hidden="true"><i></i></div><div class="card-kicker">Trial III · Adaptation</div><h3>Banner Tactics</h3><p>Read the enemy formation, answer with the right counter, and keep your colors in the field.</p></div>
+          <div class="card-footer"><div class="best-record">Best record<strong id="best-banner">—</strong></div><button class="play-button" data-game="banner" type="button">Enter trial <span aria-hidden="true">↗</span></button></div>
+        </article>
+      </div>
+      <footer class="menu-footer"><span>Offline by design · audio synthesized locally</span><span>Keyboard ready · touch ready</span></footer>
+    </section>
+
+    <section id="gameView" aria-live="polite" aria-labelledby="game-title">
+      <div class="game-topbar">
+        <button id="backButton" class="back-button" type="button">← The trials</button>
+        <div class="game-heading"><div class="eyebrow" id="game-kicker">Trial</div><h2 id="game-title">Game</h2></div>
+        <div class="game-tag" id="game-tag">Field protocol</div>
+      </div>
+      <div class="game-layout">
+        <div>
+          <div class="stage-frame" id="stageFrame">
+            <canvas id="gameCanvas" width="1000" height="560" tabindex="0" aria-label="Active game field"></canvas>
+            <div id="hud" class="hud"></div>
+            <div id="startOverlay" class="overlay"><div class="overlay-card"><div class="eyebrow">Field briefing</div><h3 id="overlayTitle">Ready your hand</h3><p id="overlayText">The trial begins when you are ready.</p><button id="startButton" class="primary-button" type="button">Begin trial</button></div></div>
+            <div id="resultOverlay" class="overlay hidden"><div class="overlay-card"><div class="eyebrow" id="resultKicker">Trial complete</div><h3 id="resultTitle">The field remembers</h3><div id="resultScore" class="result-score">0 points</div><div id="resultNote" class="result-note"></div><p id="resultText"></p><button id="restartButton" class="primary-button" type="button">Run it again</button><button id="resultBackButton" class="secondary-button" type="button" style="margin-left:8px">Choose another</button></div></div>
+          </div>
+          <div id="eventLog" class="event-log"><strong>Field note:</strong> Select a trial to receive your briefing.</div>
+        </div>
+        <aside class="control-panel" id="controlPanel" aria-label="Game controls"></aside>
+      </div>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>

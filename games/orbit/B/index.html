@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Orbit Courier</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">✦</span><div><p class="eyebrow">NIGHT SHIFT / 07</p><h1>Orbit Courier</h1></div></div>
+      <button class="restart small" data-testid="start" type="button"><span class="restart-icon">↻</span> Restart</button>
+    </header>
+
+    <section class="dashboard" aria-label="Game status">
+      <div class="metric"><span class="metric-label">Cells delivered</span><strong data-testid="score">0 / 3</strong></div>
+      <div class="metric"><span class="metric-label">Elapsed</span><strong id="time">00:00.0</strong></div>
+      <div class="metric best"><span class="metric-label">Best time</span><strong id="best">—</strong></div>
+    </section>
+
+    <section class="game-card">
+      <div class="stage-wrap">
+        <div class="stage-head"><span class="live-dot"></span><span>SECTOR 04 · ACTIVE</span><span class="stage-tip">WASD / ARROWS <i>•</i> DRAG TO STEER</span></div>
+        <div class="stage" data-testid="stage">
+          <canvas id="game" aria-label="Orbit Courier game arena"></canvas>
+          <div class="stage-overlay" id="overlay">
+            <div class="overlay-icon">✦</div>
+            <h2 id="overlay-title">Ready to run?</h2>
+            <p id="overlay-copy">Guide your courier through the field.<br>Collect all three cells. Don't touch the sentries.</p>
+            <button class="primary" data-testid="primary-action" id="action" type="button">Start mission <span>→</span></button>
+          </div>
+          <div class="toast" id="toast" aria-live="polite"></div>
+          <div class="joystick" id="joystick" aria-label="Touch steering control" role="application"><div class="stick" id="stick"></div></div>
+        </div>
+      </div>
+      <div class="status-row"><div class="status-copy"><span class="status-label">Mission status</span><strong data-testid="result" id="result">Stand by for launch</strong></div><div class="progress"><div class="progress-top"><span>Route progress</span><span id="progress-label">0%</span></div><div class="progress-track"><div id="progress-bar"></div></div></div></div>
+    </section>
+    <footer><span><b>ORBITAL DELIVERY SERVICE</b> · KEEP MOVING</span><span class="legend"><i class="legend-cell"></i> Energy cell <i class="legend-hazard"></i> Sentry</span></footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>

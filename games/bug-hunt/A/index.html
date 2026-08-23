@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bug Hunt — Dodge & Collect</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f4f5ff;
+      --muted: #aeb3ca;
+      --panel: #151728;
+      --line: #32364e;
+      --cyan: #69f6e9;
+      --yellow: #ffd35a;
+      --red: #ff5878;
+      --violet: #8b7dff;
+    }
+    * { box-sizing: border-box; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 4%, #30255e 0, transparent 35rem),
+        radial-gradient(circle at 90% 90%, #123e49 0, transparent 32rem),
+        #0b0c15;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    button { font: inherit; }
+    .app { width: min(100% - 28px, 1040px); margin: 0 auto; padding: 26px 0 34px; }
+    header { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+    .eyebrow { margin: 0 0 5px; color: var(--cyan); font-size: .72rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; }
+    h1 { margin: 0; font: 800 clamp(2rem, 5vw, 3.5rem)/.95 system-ui, sans-serif; letter-spacing: -.06em; }
+    .intro { max-width: 420px; margin: 0; color: var(--muted); line-height: 1.5; font-size: .9rem; }
+    .hud {
+      display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 10px;
+      padding: 11px 12px; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0;
+      background: rgba(21,23,40,.9); backdrop-filter: blur(8px);
+    }
+    .status { display: flex; align-items: center; min-width: 0; gap: 9px; color: var(--muted); font-size: .82rem; }
+    .status-dot { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #69708c; box-shadow: 0 0 0 4px #69708c22; }
+    .playing .status-dot { background: var(--cyan); box-shadow: 0 0 12px var(--cyan); }
+    .score-card { display: flex; align-items: baseline; gap: 5px; white-space: nowrap; }
+    [data-testid="score"] { color: var(--yellow); font-size: 1.35rem; font-weight: 900; }
+    .score-card small, .best { color: var(--muted); font-size: .72rem; }
+    .stage {
+      position: relative; width: 100%; height: clamp(390px, 56vw, 570px); min-height: 390px;
+      overflow: hidden; touch-action: none; user-select: none; outline: none;
+      border: 1px solid var(--line); border-radius: 0 0 18px 18px;
+      background-color: #101321;
+      background-image:
+        linear-gradient(#34395231 1px, transparent 1px),
+        linear-gradient(90deg, #34395231 1px, transparent 1px),
+        radial-gradient(circle at 50% 55%, #252943 0, #101321 68%);
+      background-size: 36px 36px, 36px 36px, auto;
+      box-shadow: 0 24px 70px #0008;
+    }
+    .stage:focus-visible { outline: 3px solid var(--cyan); outline-offset: 3px; }
+    .stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; box-shadow: inset 0 0 70px #05060dbb; }
+    .arena-label { position: absolute; z-index: 1; top: 13px; left: 15px; color: #858ca8; font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; }
+    .entity { position: absolute; z-index: 3; translate: -50% -50%; will-change: left, top; }
+    .player {
+      width: 34px; height: 34px; border: 3px solid #d8fffb; border-radius: 10px 10px 13px 13px;
+      background: linear-gradient(145deg, #b9fff8, #23cfc5 65%); box-shadow: 0 0 0 6px #69f6e91c, 0 0 24px #69f6e988;
+      transition: box-shadow .15s, scale .15s;
+    }
+    .player::before, .player::after { content: ""; position: absolute; top: 9px; width: 5px; height: 5px; border-radius: 50%; background: #10252b; }
+    .player::before { left: 6px; } .player::after { right: 6px; }
+    .boosting .player { scale: 1.12; box-shadow: 0 0 0 10px #69f6e92c, 0 0 35px #69f6e9cc; }
+    .enemy {
+      width: 43px; height: 43px; border-radius: 50% 50% 42% 42%; border: 3px solid #ff9aab;
+      background: repeating-linear-gradient(45deg, #ff5878 0 6px, #c83056 6px 12px); box-shadow: 0 0 28px #ff315b99;
+    }
+    .enemy::before, .enemy::after { content: ""; position: absolute; top: 12px; width: 7px; height: 4px; border-radius: 4px; background: white; }
+    .enemy::before { left: 7px; rotate: 18deg; } .enemy::after { right: 7px; rotate: -18deg; }
+    .spark {
+      width: 22px; height: 22px; rotate: 45deg; border: 2px solid #fff6c5; border-radius: 6px;
+      background: var(--yellow); box-shadow: 0 0 8px white, 0 0 25px var(--yellow);
+      animation: shimmer .9s ease-in-out infinite alternate;
+    }
+    @keyframes shimmer { to { scale: 1.22; rotate: 135deg; } }
+    .target-ring { position: absolute; z-index: 2; width: 25px; height: 25px; translate: -50% -50%; border: 1px solid #69f6e977; border-radius: 50%; opacity: 0; pointer-events: none; }
+    .playing .target-ring.active { opacity: 1; animation: ring .5s ease-out; }
+    @keyframes ring { from { scale: 1.8; opacity: .9; } to { scale: .5; opacity: 0; } }
+    .overlay {
+      position: absolute; z-index: 8; inset: 0; display: grid; place-items: center; padding: 25px;
+      background: #090b14b8; backdrop-filter: blur(5px); text-align: center; transition: opacity .2s;
+    }
+    .playing .overlay { opacity: 0; pointer-events: none; }
+    .overlay-card { max-width: 460px; }
+    .overlay-kicker { color: var(--yellow); font-weight: 900; letter-spacing: .14em; text-transform: uppercase; }
+    [data-testid="result"] { min-height: 2.4em; margin: 8px 0 18px; font: 800 clamp(1.45rem, 4vw, 2.25rem)/1.1 system-ui, sans-serif; }
+    .instructions { color: var(--muted); font-size: .78rem; line-height: 1.55; }
+    .controls { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+    .button-row { display: flex; gap: 9px; }
+    button {
+      border: 1px solid #4a506e; border-radius: 10px; padding: 10px 14px; color: var(--ink); background: #252942;
+      cursor: pointer; font-weight: 800; transition: translate .15s, background .15s, border-color .15s;
+    }
+    button:hover { background: #313653; border-color: #6a739b; }
+    button:active { translate: 0 2px; }
+    button:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
+    .primary { color: #081512; border-color: var(--cyan); background: var(--cyan); }
+    .primary:hover { background: #a4fff6; border-color: white; }
+    [data-testid="primary-action"] { min-width: 150px; }
+    [data-testid="primary-action"]:disabled { opacity: .45; cursor: not-allowed; }
+    .hint { color: var(--muted); font-size: .72rem; }
+    .toast { position: absolute; z-index: 7; left: 50%; top: 65px; translate: -50% -15px; opacity: 0; color: var(--yellow); font-weight: 900; text-shadow: 0 2px 8px #000; pointer-events: none; }
+    .toast.show { animation: toast .7s ease-out; }
+    @keyframes toast { 15% { opacity: 1; translate: -50% 0; } 100% { opacity: 0; translate: -50% -28px; } }
+    @media (max-width: 650px) {
+      .app { width: min(100% - 18px, 1040px); padding-top: 16px; }
+      header { display: block; } .intro { margin-top: 10px; font-size: .78rem; }
+      .hud { grid-template-columns: 1fr auto; } .best { display: none; }
+      .stage { height: min(60vh, 500px); min-height: 400px; }
+      .controls { align-items: stretch; flex-direction: column; } .button-row { display: grid; grid-template-columns: 1fr 1fr; }
+      [data-testid="primary-action"] { width: 100%; min-width: 0; }
+      .hint { text-align: center; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; } }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <header>
+      <div><p class="eyebrow">Micro arcade / Sector 05</p><h1>BUG HUNT</h1></div>
+      <p class="intro">Guide the cyan scout through the grid. Gather five volatile sparks before the hunter closes in.</p>
+    </header>
+
+    <section class="hud" aria-label="Game status">
+      <div class="status"><span class="status-dot"></span><span id="statusText">SYSTEM READY</span></div>
+      <div class="score-card"><span id="score" data-testid="score" aria-live="polite">0</span><small>/ 5 SPARKS</small></div>
+      <div class="best">BEST <strong id="best">0</strong>/5</div>
+    </section>
+
+    <div id="stage" class="stage" data-testid="stage" tabindex="0" role="application" aria-label="Bug Hunt game area. Use arrow or W A S D keys to move.">
+      <span class="arena-label">Containment grid // use arrows, WASD, or drag</span>
+      <div id="targetRing" class="target-ring"></div>
+      <div id="spark" class="entity spark" aria-hidden="true"></div>
+      <div id="player" class="entity player" aria-label="Your cyan scout"></div>
+      <div id="enemy" class="entity enemy" aria-label="Red enemy"></div>
+      <div id="toast" class="toast" aria-hidden="true">SPARK SECURED</div>
+      <div class="overlay" id="overlay">
+        <div class="overlay-card">
+          <div class="overlay-kicker" id="overlayKicker">Field briefing</div>
+          <p id="result" data-testid="result" aria-live="assertive">Collect all five. Don't touch the hunter.</p>
+          <div class="instructions">Move with arrow keys / WASD or point and drag in the arena.<br>The pulse button gives a short speed boost toward the spark.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="button-row">
+        <button id="startButton" class="primary" type="button" data-testid="start">Start hunt</button>
+        <button id="resetButton" type="button">Reset</button>
+      </div>
+      <button id="actionButton" type="button" data-testid="primary-action" disabled>Pulse boost <span aria-hidden="true">⚡</span></button>
+      <span class="hint">Tip: keep moving — it tracks you.</span>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const WORLD = { width: 1000, height: 560 };
+      const SPARKS = [
+        { x: 170, y: 150 }, { x: 470, y: 95 }, { x: 760, y: 190 },
+        { x: 700, y: 445 }, { x: 300, y: 420 }
+      ];
+      const BEST_KEY = 'bench.bug-hunt.best-score';
+      const els = {
+        app: document.getElementById('app'), stage: document.getElementById('stage'),
+        player: document.getElementById('player'), enemy: document.getElementById('enemy'), spark: document.getElementById('spark'),
+        score: document.getElementById('score'), best: document.getElementById('best'), result: document.getElementById('result'),
+        status: document.getElementById('statusText'), start: document.getElementById('startButton'), reset: document.getElementById('resetButton'),
+        action: document.getElementById('actionButton'), overlayKicker: document.getElementById('overlayKicker'),
+        toast: document.getElementById('toast'), ring: document.getElementById('targetRing')
+      };
+
+      const initialState = () => ({
+        phase: 'ready', score: 0, progress: 0, player: { x: 100, y: 280 }, enemy: { x: 860, y: 280 },
+        target: null, keys: new Set(), pointerDown: false, boostUntil: 0, actionCount: 0,
+        frameId: null, lastTime: 0, runId: 0
+      });
+      let state = initialState();
+      let bestScore = readBest();
+
+      function readBest() {
+        try { return Math.max(0, Math.min(5, Number(localStorage.getItem(BEST_KEY)) || 0)); }
+        catch (_) { return 0; }
+      }
+      function saveBest() {
+        if (state.score <= bestScore) return;
+        bestScore = state.score;
+        try { localStorage.setItem(BEST_KEY, String(bestScore)); } catch (_) { /* Storage can be unavailable in private contexts. */ }
+      }
+      function clamp(value, min, max) { return Math.max(min, Math.min(max, value)); }
+      function distance(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+      function place(element, point) {
+        element.style.left = `${point.x / WORLD.width * 100}%`;
+        element.style.top = `${point.y / WORLD.height * 100}%`;
+      }
+      function currentSpark() { return SPARKS[Math.min(state.score, SPARKS.length - 1)]; }
+
+      function render() {
+        place(els.player, state.player);
+        place(els.enemy, state.enemy);
+        if (state.score < 5) place(els.spark, currentSpark());
+        els.spark.hidden = state.phase === 'won' || state.score >= 5;
+        els.score.textContent = String(state.score);
+        els.best.textContent = String(bestScore);
+        els.app.classList.toggle('playing', state.phase === 'playing');
+        els.app.classList.toggle('boosting', performance.now() < state.boostUntil && state.phase === 'playing');
+        els.action.disabled = state.phase !== 'playing';
+        els.start.textContent = state.phase === 'playing' ? 'Restart hunt' : state.phase === 'ready' ? 'Start hunt' : 'Play again';
+      }
+
+      function cancelLoop() {
+        if (state.frameId !== null) cancelAnimationFrame(state.frameId);
+        state.frameId = null;
+        state.runId += 1;
+      }
+
+      function startGame() {
+        cancelLoop();
+        const nextRun = state.runId;
+        state = initialState();
+        state.runId = nextRun;
+        state.phase = 'playing';
+        state.lastTime = performance.now();
+        els.status.textContent = 'HUNT IN PROGRESS';
+        els.overlayKicker.textContent = 'Field briefing';
+        els.result.textContent = 'Collect all five. Don\'t touch the hunter.';
+        render();
+        els.stage.focus({ preventScroll: true });
+        const run = state.runId;
+        state.frameId = requestAnimationFrame(time => gameLoop(time, run));
+      }
+
+      function resetGame() {
+        cancelLoop();
+        const nextRun = state.runId;
+        state = initialState();
+        state.runId = nextRun;
+        els.status.textContent = 'SYSTEM READY';
+        els.overlayKicker.textContent = 'Field briefing';
+        els.result.textContent = 'Collect all five. Don\'t touch the hunter.';
+        els.toast.classList.remove('show');
+        render();
+      }
+
+      function finish(phase) {
+        if (state.phase !== 'playing') return;
+        state.phase = phase;
+        state.keys.clear();
+        state.pointerDown = false;
+        state.target = null;
+        cancelLoop();
+        saveBest();
+        if (phase === 'won') {
+          els.status.textContent = 'SECTOR CLEARED';
+          els.overlayKicker.textContent = 'Perfect sweep';
+          els.result.textContent = 'All five sparks secured!';
+        } else {
+          els.status.textContent = 'SCOUT DISABLED';
+          els.overlayKicker.textContent = 'Collision detected';
+          els.result.textContent = `Hunter caught you — ${state.score}/5 secured.`;
+        }
+        render();
+      }
+
+      function collectCollision() {
+        if (state.phase !== 'playing' || state.score >= 5) return false;
+        if (distance(state.player, currentSpark()) > 38) return false;
+        state.score += 1;
+        state.progress = state.score / SPARKS.length;
+        saveBest();
+        els.toast.classList.remove('show');
+        void els.toast.offsetWidth;
+        els.toast.classList.add('show');
+        if (state.score === SPARKS.length) finish('won');
+        render();
+        return true;
+      }
+
+      function gameLoop(time, run) {
+        if (state.phase !== 'playing' || run !== state.runId) return;
+        const dt = Math.min((time - state.lastTime) / 1000, 0.035);
+        state.lastTime = time;
+        updatePlayer(dt, time);
+        updateEnemy(dt);
+        collectCollision();
+        if (state.phase === 'playing' && distance(state.player, state.enemy) < 39) finish('lost');
+        render();
+        if (state.phase === 'playing' && run === state.runId) state.frameId = requestAnimationFrame(next => gameLoop(next, run));
+      }
+
+      function updatePlayer(dt, time) {
+        let dx = 0, dy = 0;
+        if (state.keys.has('arrowleft') || state.keys.has('a')) dx -= 1;
+        if (state.keys.has('arrowright') || state.keys.has('d')) dx += 1;
+        if (state.keys.has('arrowup') || state.keys.has('w')) dy -= 1;
+        if (state.keys.has('arrowdown') || state.keys.has('s')) dy += 1;
+        const keyboardActive = dx !== 0 || dy !== 0;
+        if (!keyboardActive && state.target) {
+          const tx = state.target.x - state.player.x, ty = state.target.y - state.player.y;
+          const len = Math.hypot(tx, ty);
+          if (len > 5) { dx = tx / len; dy = ty / len; } else if (!state.pointerDown) state.target = null;
+        }
+        const len = Math.hypot(dx, dy) || 1;
+        const speed = time < state.boostUntil ? 430 : 275;
+        state.player.x = clamp(state.player.x + dx / len * speed * dt, 24, WORLD.width - 24);
+        state.player.y = clamp(state.player.y + dy / len * speed * dt, 28, WORLD.height - 28);
+      }
+
+      function updateEnemy(dt) {
+        const dx = state.player.x - state.enemy.x, dy = state.player.y - state.enemy.y;
+        const len = Math.hypot(dx, dy) || 1;
+        const speed = 72 + state.score * 5;
+        state.enemy.x = clamp(state.enemy.x + dx / len * speed * dt, 26, WORLD.width - 26);
+        state.enemy.y = clamp(state.enemy.y + dy / len * speed * dt, 30, WORLD.height - 30);
+      }
+
+      function pulseBoost() {
+        if (state.phase !== 'playing') return false;
+        const spark = currentSpark();
+        const dx = spark.x - state.player.x, dy = spark.y - state.player.y;
+        const len = Math.hypot(dx, dy) || 1;
+        state.player.x = clamp(state.player.x + dx / len * 32, 24, WORLD.width - 24);
+        state.player.y = clamp(state.player.y + dy / len * 32, 28, WORLD.height - 28);
+        state.target = { ...spark };
+        state.boostUntil = performance.now() + 750;
+        state.actionCount += 1;
+        collectCollision();
+        render();
+        return true;
+      }
+
+      function eventPoint(event) {
+        const rect = els.stage.getBoundingClientRect();
+        return {
+          x: clamp((event.clientX - rect.left) / rect.width * WORLD.width, 24, WORLD.width - 24),
+          y: clamp((event.clientY - rect.top) / rect.height * WORLD.height, 28, WORLD.height - 28)
+        };
+      }
+      function setPointerTarget(event) {
+        if (state.phase !== 'playing') return;
+        state.target = eventPoint(event);
+        place(els.ring, state.target);
+        els.ring.classList.remove('active');
+        void els.ring.offsetWidth;
+        els.ring.classList.add('active');
+      }
+
+      els.start.addEventListener('click', startGame);
+      els.reset.addEventListener('click', resetGame);
+      els.action.addEventListener('click', pulseBoost);
+      els.stage.addEventListener('pointerdown', event => {
+        if (state.phase !== 'playing') return;
+        state.pointerDown = true;
+        setPointerTarget(event);
+        els.stage.setPointerCapture(event.pointerId);
+      });
+      els.stage.addEventListener('pointermove', event => { if (state.pointerDown) setPointerTarget(event); });
+      els.stage.addEventListener('pointerup', event => {
+        state.pointerDown = false;
+        if (els.stage.hasPointerCapture(event.pointerId)) els.stage.releasePointerCapture(event.pointerId);
+      });
+      els.stage.addEventListener('pointercancel', () => { state.pointerDown = false; });
+      window.addEventListener('keydown', event => {
+        const key = event.key.toLowerCase();
+        if (['arrowleft','arrowright','arrowup','arrowdown','w','a','s','d'].includes(key)) {
+          if (state.phase === 'playing') { event.preventDefault(); state.keys.add(key); state.target = null; }
+        }
+        if ((key === ' ' || key === 'enter') && event.target === els.stage && state.phase === 'playing') {
+          event.preventDefault(); pulseBoost();
+        }
+      });
+      window.addEventListener('keyup', event => state.keys.delete(event.key.toLowerCase()));
+      window.addEventListener('blur', () => { state.keys.clear(); state.pointerDown = false; });
+
+      function adapterComplete() {
+        if (state.phase !== 'playing') startGame();
+        while (state.phase === 'playing' && state.score < SPARKS.length) {
+          state.enemy = { x: 980, y: 540 };
+          state.player = { ...currentSpark() };
+          collectCollision();
+        }
+        return publicState();
+      }
+      function publicState() {
+        return {
+          phase: state.phase,
+          score: state.score,
+          progress: state.progress,
+          player: { ...state.player },
+          enemy: { ...state.enemy },
+          actionCount: state.actionCount,
+          bestScore
+        };
+      }
+      window.__benchmark = {
+        start: () => { startGame(); return publicState(); },
+        act: () => { pulseBoost(); return publicState(); },
+        complete: adapterComplete,
+        reset: () => { resetGame(); return publicState(); },
+        getState: publicState
+      };
+
+      render();
+    })();
+  </script>
+</body>
+</html>

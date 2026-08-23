@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Experimentos — Minijuegos</title>
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{background:linear-gradient(180deg,#10141f,#1b2230);color:#e8ecf5;font-family:system-ui,sans-serif;min-height:100vh;padding:20px}
+  h1{font-size:1.6rem;color:#ffd88a;text-align:center;margin-bottom:6px}
+  p.sub{color:#9fb0c4;text-align:center;font-size:.9rem;margin-bottom:18px}
+  .seccion{font-size:1rem;color:#8fa0bb;text-transform:uppercase;letter-spacing:1px;margin:14px 0 8px}
+  .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+  a.card{display:block;padding:18px 14px;border-radius:14px;background:#232c3d;border:1px solid #33415e;color:#fff;text-decoration:none;transition:.15s;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+  a.card:hover{transform:translateY(-2px);border-color:#8fa0ff}
+  .card .tit{font-weight:800;font-size:1.05rem;color:#ffe08a}
+  .card .desc{font-size:.85rem;color:#aab6c8;margin-top:6px}
+  .card .ver{display:inline-block;margin-top:10px;padding:3px 10px;border-radius:8px;background:#3a4a6b;font-size:.75rem;color:#dce7ff}
+  .nota{background:#2c3550;border:1px solid #4a5a80;border-radius:12px;padding:12px;margin-top:18px;color:#b9c5dc;font-size:.85rem}
+</style>
+</head>
+<body>
+<h1>⚔️ Experimentos de Minijuegos</h1>
+<p class="sub">Cinco mecánicas distintas, cada una con dos variantes. Y un pack medieval. Elige y juega.</p>
+
+<div class="seccion">Batalla de variantes — elige un diseño (A o B)</div>
+<div class="grid">
+  <a class="card" href="games/bug-hunt/A/index.html"><div class="tit">Bug Hunt</div><div class="desc">Esquiva y recoge — v. A</div><div class="ver">Jugar A</div></a>
+  <a class="card" href="games/bug-hunt/B/index.html"><div class="tit">Bug Hunt</div><div class="desc">Esquiva y recoge — v. B</div><div class="ver">Jugar B</div></a>
+  <a class="card" href="games/circuit/A/index.html"><div class="tit">Circuito</div><div class="desc">Mosaico de circuitos — v. A</div><div class="ver">Jugar A</div></a>
+  <a class="card" href="games/circuit/B/index.html"><div class="tit">Circuito</div><div class="desc">Mosaico de circuitos — v. B</div><div class="ver">Jugar B</div></a>
+  <a class="card" href="games/feature-upgrade/A/index.html"><div class="tit">Reacción del Señal</div><div class="desc">Máquina de reacción — v. A</div><div class="ver">Jugar A</div></a>
+  <a class="card" href="games/feature-upgrade/B/index.html"><div class="tit">Reacción del Señal</div><div class="desc">Entrenamiento de reacción — v. B</div><div class="ver">Jugar B</div></a>
+  <a class="card" href="games/orbit/A/index.html"><div class="tit">Órbita</div><div class="desc">Repartidor orbital — v. A</div><div class="ver">Jugar A</div></a>
+  <a class="card" href="games/orbit/B/index.html"><div class="tit">Órbita</div><div class="desc">Repartidor orbital — v. B</div><div class="ver">Jugar B</div></a>
+  <a class="card" href="games/pulse/A/index.html"><div class="tit">Pulso</div><div class="desc">Detén el pulso — v. A</div><div class="ver">Jugar A</div></a>
+  <a class="card" href="games/pulse/B/index.html"><div class="tit">Pulso</div><div class="desc">Detén el pulso — v. B</div><div class="ver">Jugar B</div></a>
+</div>
+
+<div class="seccion">A era medieval</div>
+<div class="grid">
+  <a class="card" href="games/medieval-1/index.html"><div class="tit">Medieval Realms I</div><div class="desc">Suite táctica — versión 1</div><div class="ver">Jugar</div></a>
+  <a class="card" href="games/medieval-2/index.html"><div class="tit">Emberward I</div><div class="desc">Tres pruebas de estrategia — v1</div><div class="ver">Jugar</div></a>
+  <a class="card" href="games/medieval-manual/index.html"><div class="tit">Emberward Manual</div><div class="desc">Tres pruebas — versión a mano</div><div class="ver">Jugar</div></a>
+</div>
+
+<div class="nota"><b>Nota:</b> Cada duplicado (A/B) parte de la misma mecánica pero fue generado por un ejecutor distinto; compáralos en jugabilidad, física y pulido. Los récords se guardan en cada navegador.</div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#070a17">
+  <title>Orbit Courier</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand" aria-label="Orbit Courier">
+        <span class="brand-mark" aria-hidden="true"><i></i></span>
+        <span><b>ORBIT</b><em>COURIER</em></span>
+      </div>
+      <div class="mission-tag"><span></span> ROUTE 03 / LIVE</div>
+    </header>
+
+    <section class="game-panel" aria-labelledby="game-title">
+      <div class="panel-head">
+        <div>
+          <p class="eyebrow">DEEP-SPACE DISPATCH</p>
+          <h1 id="game-title">Recover the <span>energy cells.</span></h1>
+        </div>
+        <button class="start-button" type="button" data-testid="start">
+          <span class="button-icon" aria-hidden="true">▶</span>
+          <span class="button-copy"><small>MISSION CONTROL</small><b>START RUN</b></span>
+        </button>
+      </div>
+
+      <div class="stats" aria-label="Mission status">
+        <div class="stat progress-stat">
+          <span class="stat-label">CARGO</span>
+          <strong data-testid="score">0 / 3</strong>
+          <div class="cells" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <div class="stat"><span class="stat-label">ELAPSED</span><strong id="time">00:00.0</strong></div>
+        <div class="stat"><span class="stat-label">BEST RUN</span><strong id="best">--:--.-</strong></div>
+        <div class="stat danger"><span class="stat-label">THREAT</span><strong id="threat">LOW</strong></div>
+      </div>
+
+      <div class="arena-wrap" data-testid="stage">
+        <canvas id="arena" data-testid="primary-action" aria-label="Top-down game arena. Move the courier to collect three cells while avoiding red hazards." tabindex="0"></canvas>
+        <div class="scanlines" aria-hidden="true"></div>
+        <div class="arena-label north" aria-hidden="true">N-17</div>
+        <div class="arena-label sector" aria-hidden="true">SECTOR // ORBITAL YARD</div>
+
+        <div class="overlay intro" id="introOverlay">
+          <div class="orbit-graphic" aria-hidden="true"><span></span><i></i></div>
+          <p>COURIER LINK READY</p>
+          <h2>Collect all 3 cells.<br><span>Do not touch the sentries.</span></h2>
+          <div class="key-hints"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><span>or drag the flight stick</span></div>
+        </div>
+
+        <div class="overlay outcome" id="outcomeOverlay" hidden>
+          <div class="outcome-icon" aria-hidden="true">✓</div>
+          <p id="resultKicker">DELIVERY COMPLETE</p>
+          <h2 data-testid="result">Ready for launch.</h2>
+          <span id="resultDetail"></span>
+          <button type="button" class="again-button" id="againButton">RUN IT AGAIN <b>↻</b></button>
+        </div>
+      </div>
+
+      <div class="mobile-controls" aria-label="Touch controls">
+        <div class="joystick" role="button" tabindex="0" aria-label="Flight stick: drag in a direction to move">
+          <span class="joystick-rings" aria-hidden="true"></span>
+          <span class="joystick-knob" aria-hidden="true"><i></i></span>
+        </div>
+        <div class="touch-copy"><b>FLIGHT STICK</b><span>DRAG TO STEER</span></div>
+        <button type="button" class="pulse-button" id="pulseButton" aria-label="Apply movement pulse">PULSE<span>››</span></button>
+      </div>
+
+      <footer class="briefing">
+        <p><span>01</span><b>RECOVER</b> Cyan cells replenish your cargo bay.</p>
+        <p><span>02</span><b>EVADE</b> Sentries accelerate with every pickup.</p>
+        <p class="status-line"><i></i> NAV SYSTEM ONLINE</p>
+      </footer>
+    </section>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>

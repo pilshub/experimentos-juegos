@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signal Chain — Reaction Training</title>
+  <style>
+    :root{color-scheme:dark;--ink:#f5f7ff;--muted:#9aa8c7;--line:#293758;--panel:#111a2c;--panel2:#17233b;--violet:#9277ff;--cyan:#5ce1e6;--green:#48e08a;--red:#ff6d82;--gold:#ffd66b}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#09101f;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}body{overflow-x:hidden;background-image:radial-gradient(circle at 15% 0%,#1c2b50 0,transparent 35%),radial-gradient(circle at 90% 75%,#182540 0,transparent 32%)}
+    button{font:inherit;color:inherit;cursor:pointer;min-height:44px}.shell{width:min(1100px,calc(100% - 40px));margin:0 auto;padding:34px 0 42px}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:30px}.eyebrow{margin:0 0 8px;color:var(--cyan);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}.brand{margin:0;font-size:clamp(30px,5vw,48px);letter-spacing:-.055em;line-height:1}.intro{margin:12px 0 0;color:var(--muted);font-size:15px}.start{border:1px solid #5361a6;background:linear-gradient(135deg,#765ee6,#a176ff);box-shadow:0 10px 30px #7157e333;border-radius:12px;padding:13px 21px;font-weight:800;white-space:nowrap}.start:hover{filter:brightness(1.1)}
+    button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}.layout{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:20px}.game-card,.side-card{border:1px solid var(--line);background:linear-gradient(145deg,#131e34eF,#0e1729f5);border-radius:22px;box-shadow:0 24px 60px #0003}.game-card{padding:22px}.statusline{display:flex;justify-content:space-between;align-items:center;margin:0 2px 20px;color:var(--muted);font-size:13px}.round-label{color:var(--ink);font-weight:750}.phase-label{display:flex;align-items:center;gap:8px}.phase-label:before{content:"";width:7px;height:7px;background:var(--cyan);border-radius:50%;box-shadow:0 0 12px var(--cyan)}
+    .signal-zone{position:relative;min-height:440px;border-radius:17px;display:grid;place-items:center;overflow:hidden;background:#101b31;border:1px solid #263557;transition:background .25s,border-color .25s}.signal-zone:before,.signal-zone:after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(#ffffff06 1px,transparent 1px),linear-gradient(90deg,#ffffff06 1px,transparent 1px);background-size:42px 42px;mask-image:linear-gradient(to bottom,transparent,#000,transparent)}.signal-zone:after{width:180px;height:180px;inset:auto;border-radius:50%;background:var(--violet);filter:blur(80px);opacity:.16}.signal-zone.waiting{background:#161b2b}.signal-zone.signal{background:linear-gradient(145deg,#123a36,#17563e);border-color:#3cbe81}.signal-zone.signal:after{background:var(--green);opacity:.3}.signal-zone.false{background:#432037;border-color:#d1516b}.signal-zone.won{background:#263150;border-color:var(--gold)}.target{position:relative;z-index:1;width:min(62%,280px);aspect-ratio:1;border-radius:50%;border:1px solid #ffffff2e;background:radial-gradient(circle at 35% 28%,#ffffff3b 0 3%,transparent 4%),linear-gradient(145deg,#8068ec,#4a3d96);box-shadow:0 0 0 16px #ffffff08,0 0 80px #7965ff55;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;transition:transform .18s,background .25s,box-shadow .25s}.target:hover{transform:scale(1.025)}.signal .target{background:radial-gradient(circle at 35% 28%,#eafff055 0 3%,transparent 4%),linear-gradient(145deg,#55e599,#189361);box-shadow:0 0 0 16px #ffffff0d,0 0 90px #55ed9b88}.false .target{background:linear-gradient(145deg,#ff7486,#a63355);box-shadow:0 0 0 16px #ffffff08,0 0 80px #ff526877}.won .target{background:linear-gradient(145deg,#ffe895,#d69c35);color:#281e0c}.target-word{font-size:clamp(27px,5vw,42px);font-weight:900;letter-spacing:.08em}.target-hint{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#ffffffa8}.signal .target-hint{color:#073b27}.won .target-hint{color:#624716}
+    .hint{margin:18px 2px 0;color:var(--muted);font-size:13px}.key{border:1px solid #425171;border-radius:5px;padding:2px 7px;color:#e5e9f6;background:#1e2b45;font-size:11px}.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}.metric{padding:14px 15px;border:1px solid var(--line);border-radius:13px;background:#0d1729}.metric-label{display:block;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.1em}.metric-value{display:block;margin-top:5px;font-size:22px;font-weight:800}.side-card{padding:22px;height:max-content}.side-card h2{margin:0 0 20px;font-size:16px}.side-card p{color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 18px}.best{font-size:38px;font-weight:850;letter-spacing:-.05em;color:var(--gold)}.best small{font-size:14px;letter-spacing:0;color:var(--muted)}.rule{height:1px;background:var(--line);margin:22px 0}.steps{display:grid;gap:11px}.step{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px}.step i{display:grid;place-items:center;width:22px;height:22px;border:1px solid #425171;border-radius:50%;font-style:normal;color:#cad4ef}.step.active i{border-color:var(--cyan);color:var(--cyan)}.step.done i{background:var(--green);border-color:var(--green);color:#09291b}.message{min-height:24px;margin:17px 3px 0;font-size:14px;font-weight:700;color:var(--cyan)}.message.error{color:var(--red)}.message.success{color:var(--gold)}
+    @media(max-width:760px){.shell{width:min(100% - 24px,540px);padding:22px 0 30px}.top{margin-bottom:22px;align-items:center}.intro{font-size:13px}.start{padding:11px 14px;font-size:13px}.layout{display:block}.side-card{margin-top:14px}.signal-zone{min-height:360px}.game-card{padding:14px}.metrics{gap:7px}.metric{padding:12px 9px}.metric-value{font-size:18px}.hint{font-size:12px}.side-card{padding:18px}.side-card p{margin-bottom:12px}.rule{margin:16px 0}}
+    @media(max-width:390px){.shell{width:calc(100% - 18px)}.brand{font-size:29px}.top{gap:10px}.start{padding:10px 11px}.signal-zone{min-height:330px}.target{width:66%}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="top"><div><p class="eyebrow">Reflex protocol / 05</p><h1 class="brand">Signal Chain</h1><p class="intro">Hold the line. Catch the signal when it turns green.</p></div><button class="start" data-testid="start" type="button">Start run</button></header>
+    <div class="layout">
+      <section class="game-card" aria-label="Signal Chain game">
+        <div class="statusline"><span class="round-label" id="roundLabel">Ready for a run</span><span class="phase-label" id="phaseLabel">Standby</span></div>
+        <div class="signal-zone" id="stage" data-testid="stage"><button class="target" id="action" data-testid="primary-action" type="button" aria-label="Signal target"><span class="target-word" id="targetWord">READY</span><span class="target-hint" id="targetHint">Press start</span></button></div>
+        <p class="message" id="result" data-testid="result" aria-live="polite">Five signals. One clean chain.</p>
+        <p class="hint">Tap the core or press <span class="key">SPACE</span> when the signal turns green.</p>
+        <div class="metrics"><div class="metric"><span class="metric-label">Current</span><strong class="metric-value" id="score" data-testid="score">—</strong></div><div class="metric"><span class="metric-label">Average</span><strong class="metric-value" id="average">—</strong></div><div class="metric"><span class="metric-label">Combo</span><strong class="metric-value" id="combo">0×</strong></div></div>
+      </section>
+      <aside class="side-card"><h2>Chain record</h2><p>Build a clean five-round run. Fast reactions grow your combo multiplier; false starts break the chain.</p><div class="best" id="best">— <small>ms best average</small></div><div class="rule"></div><div class="steps" id="steps"><div class="step active"><i>1</i><span>Prime the channel</span></div><div class="step"><i>2</i><span>Wait for green</span></div><div class="step"><i>3</i><span>React cleanly</span></div><div class="step"><i>4</i><span>Keep your combo</span></div><div class="step"><i>5</i><span>Complete the chain</span></div></div></aside>
+    </div>
+  </main>
+  <script>
+    (() => {
+      const stage = document.querySelector('[data-testid="stage"]');
+      const action = document.querySelector('[data-testid="primary-action"]');
+      const startButton = document.querySelector('[data-testid="start"]');
+      const result = document.querySelector('[data-testid="result"]');
+      const scoreEl = document.querySelector('[data-testid="score"]');
+      const roundLabel = document.getElementById('roundLabel');
+      const phaseLabel = document.getElementById('phaseLabel');
+      const targetWord = document.getElementById('targetWord');
+      const targetHint = document.getElementById('targetHint');
+      const averageEl = document.getElementById('average');
+      const comboEl = document.getElementById('combo');
+      const bestEl = document.getElementById('best');
+      const steps = [...document.querySelectorAll('.step')];
+      const storageKey = 'bench.signal-chain.bestAverage';
+      let timer = 0;
+      let state = { phase:'ready', round:0, score:0, progress:0, times:[], combo:0, bestAverage:loadBest() };
+
+      function loadBest(){ const value = Number(localStorage.getItem(storageKey)); return Number.isFinite(value) && value > 0 ? value : null; }
+      function saveBest(value){ state.bestAverage = value; localStorage.setItem(storageKey, String(value)); }
+      function setMessage(text, kind=''){ result.textContent = text; result.className = `message ${kind}`; }
+      function render(){
+        const current = state.times[state.times.length - 1];
+        roundLabel.textContent = state.phase === 'ready' ? 'Ready for a run' : state.phase === 'won' ? 'Chain complete' : `Round ${Math.min(state.round,5)} of 5`;
+        phaseLabel.textContent = ({ready:'Standby',waiting:'Listening',signal:'Signal live',falseStart:'Recovery',won:'Success'})[state.phase] || 'Standby';
+        scoreEl.textContent = current ? `${current} ms` : '—';
+        averageEl.textContent = state.times.length ? `${Math.round(state.times.reduce((a,b)=>a+b,0)/state.times.length)} ms` : '—';
+        comboEl.textContent = `${state.combo}×`;
+        bestEl.innerHTML = state.bestAverage ? `${state.bestAverage} <small>ms best average</small>` : `— <small>ms best average</small>`;
+        steps.forEach((step,i)=>step.className = `step ${i < state.progress ? 'done' : ''} ${i === state.progress && state.phase !== 'won' ? 'active' : ''}`);
+      }
+      function armRound(){
+        clearTimeout(timer); state.phase='waiting'; state.round=state.progress+1; stage.className='signal-zone waiting'; targetWord.textContent='WAIT'; targetHint.textContent='Stay ready'; setMessage('Listening for the next signal…'); render();
+        // The delay changes by round and uses a repeatable spread, so every chain feels less predictable.
+        const delay = 720 + state.round*185 + ((state.round*97)%430);
+        timer = setTimeout(() => { if(state.phase !== 'waiting') return; state.phase='signal'; state.startedAt=performance.now(); stage.className='signal-zone signal'; targetWord.textContent='GO'; targetHint.textContent='Tap or press space'; phaseLabel.textContent='Signal live'; setMessage('Now. Make it clean.'); }, delay);
+      }
+      function begin(){ clearTimeout(timer); state={phase:'waiting',round:0,score:0,progress:0,times:[],combo:0,bestAverage:loadBest()}; startButton.textContent='Restart run'; setMessage('The channel is primed. Wait for green.'); armRound(); }
+      function falseStart(){ clearTimeout(timer); state.phase='falseStart'; state.combo=0; stage.className='signal-zone false'; targetWord.textContent='EARLY'; targetHint.textContent='Reset and try again'; setMessage('False start — the chain is still recoverable.', 'error'); render(); }
+      function act(){
+        if(state.phase === 'signal'){
+          const reaction = Math.max(1, Math.round(performance.now()-state.startedAt)); state.times.push(reaction); state.progress++; state.score=reaction; state.combo = reaction <= 430 ? state.combo+1 : 0;
+          if(state.progress >= 5){ clearTimeout(timer); state.phase='won'; const avg=Math.round(state.times.reduce((a,b)=>a+b,0)/5); stage.className='signal-zone won'; targetWord.textContent='CHAIN'; targetHint.textContent='Run complete'; setMessage(`Clean chain. Average reaction: ${avg} ms.`, 'success'); if(!state.bestAverage || avg < state.bestAverage) saveBest(avg); render(); }
+          else { setMessage(`${reaction} ms — signal secured${state.combo > 1 ? ` · ${state.combo}× combo` : ''}.`, 'success'); render(); armRound(); }
+          return;
+        }
+        if(state.phase === 'waiting'){ falseStart(); return; }
+        if(state.phase === 'falseStart'){ begin(); return; }
+      }
+      function complete(){ if(state.phase === 'ready' || state.phase === 'won') begin(); clearTimeout(timer); if(state.phase === 'waiting'){state.phase='signal'; state.startedAt=performance.now(); stage.className='signal-zone signal'; targetWord.textContent='GO'; targetHint.textContent='Adapter signal';} if(state.phase==='signal') act(); while(state.phase !== 'won' && state.progress < 5){ state.phase='signal'; state.startedAt=performance.now(); act(); } }
+      function reset(){ clearTimeout(timer); state={phase:'ready',round:0,score:0,progress:0,times:[],combo:0,bestAverage:loadBest()}; startButton.textContent='Start run'; stage.className='signal-zone'; targetWord.textContent='READY'; targetHint.textContent='Press start'; setMessage('Five signals. One clean chain.'); render(); }
+      startButton.addEventListener('click', begin); action.addEventListener('click', act); document.addEventListener('keydown', e => { if(e.code==='Space' || e.code==='Enter'){ e.preventDefault(); if(state.phase==='ready' || state.phase==='won') begin(); else act(); } });
+      window.__benchmark={start:begin,act,complete,reset,getState:()=>({phase:state.phase,score:state.score,progress:state.progress,round:state.round,combo:state.combo,times:[...state.times]})};
+      render();
+    })();
+  </script>
+</body>
+</html>

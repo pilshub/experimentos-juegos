@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b12">
+  <title>Signal Chain — Reaction Run</title>
+  <style>
+    :root {
+      --ink: #f4f7fb;
+      --muted: #8e9aae;
+      --panel: #111722;
+      --line: #283244;
+      --cyan: #35d9ff;
+      --green: #60f49c;
+      --red: #ff5470;
+      --amber: #ffc857;
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      overflow-x: hidden;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 50% -10%, rgba(53, 217, 255, .11), transparent 34rem),
+        linear-gradient(180deg, #0a0e16 0%, #070910 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      letter-spacing: .01em;
+    }
+
+    button { font: inherit; }
+
+    .shell {
+      width: min(100% - 32px, 980px);
+      margin: 0 auto;
+      padding: 36px 0 40px;
+    }
+
+    header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow {
+      margin: 0 0 6px;
+      color: var(--cyan);
+      font: 700 11px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: .95;
+      letter-spacing: -.055em;
+    }
+
+    .best-chip {
+      flex: 0 0 auto;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: rgba(17, 23, 34, .74);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .best-chip strong { color: var(--ink); }
+
+    .board {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 16px;
+    }
+
+    .game-card,
+    .side-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(17, 23, 34, .88);
+      box-shadow: 0 22px 60px rgba(0, 0, 0, .28);
+    }
+
+    .game-card { padding: 18px; }
+
+    .chain {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .node {
+      position: relative;
+      height: 5px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #253044;
+    }
+
+    .node::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--cyan);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .28s ease;
+    }
+
+    .node.done::after { transform: scaleX(1); }
+    .node.current { box-shadow: 0 0 0 1px var(--cyan), 0 0 14px rgba(53, 217, 255, .5); }
+
+    .stage {
+      position: relative;
+      min-height: 410px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid #303a4a;
+      border-radius: 16px;
+      background:
+        linear-gradient(rgba(255,255,255,.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.028) 1px, transparent 1px),
+        radial-gradient(circle, #182130 0%, #0d121c 67%);
+      background-size: 28px 28px, 28px 28px, auto;
+      transition: border-color .18s, background-color .18s;
+      touch-action: manipulation;
+    }
+
+    .stage::before,
+    .stage::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: 340px;
+      height: 340px;
+      border: 1px solid rgba(142, 154, 174, .18);
+      border-radius: 50%;
+      transition: all .25s ease;
+    }
+
+    .stage::after { width: 270px; height: 270px; border-style: dashed; }
+
+    .stage.signal {
+      border-color: var(--green);
+      background-color: rgba(96, 244, 156, .09);
+      box-shadow: inset 0 0 75px rgba(96, 244, 156, .1);
+    }
+
+    .stage.signal::before { border-color: rgba(96, 244, 156, .55); transform: scale(1.06); }
+    .stage.signal::after { border-color: var(--green); transform: rotate(14deg); }
+
+    .stage.false-start {
+      border-color: var(--red);
+      animation: shake .25s linear 2;
+    }
+
+    .status-label {
+      position: absolute;
+      top: 20px;
+      left: 22px;
+      color: var(--muted);
+      font: 700 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .status-label::before {
+      content: "";
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 9px currentColor;
+      vertical-align: 1px;
+    }
+
+    .stage.signal .status-label { color: var(--green); }
+    .stage.false-start .status-label { color: var(--red); }
+
+    .target {
+      width: 190px;
+      aspect-ratio: 1;
+      display: grid;
+      place-content: center;
+      gap: 7px;
+      padding: 0;
+      color: var(--ink);
+      border: 1px solid #46536a;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #1c2534, #101620);
+      box-shadow: 0 0 0 10px rgba(20, 28, 40, .8), 0 22px 40px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.12);
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      transition: transform .12s, border-color .18s, background .18s, box-shadow .18s;
+    }
+
+    .target:hover { transform: scale(1.02); border-color: #64738d; }
+    .target:active { transform: scale(.97); }
+    .target:focus-visible,
+    .control:focus-visible {
+      outline: 3px solid var(--cyan);
+      outline-offset: 4px;
+    }
+
+    .target-main {
+      font-size: 25px;
+      font-weight: 850;
+      letter-spacing: .08em;
+    }
+
+    .target-sub {
+      color: var(--muted);
+      font: 700 10px/1.2 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .12em;
+    }
+
+    .stage.signal .target {
+      color: #07140c;
+      border-color: #bcffd2;
+      background: var(--green);
+      box-shadow: 0 0 0 10px rgba(96,244,156,.12), 0 0 55px rgba(96,244,156,.5), inset 0 1px 1px rgba(255,255,255,.75);
+      animation: pulse .75s ease-in-out infinite alternate;
+    }
+
+    .stage.signal .target-sub { color: #17492a; }
+
+    .feedback {
+      position: absolute;
+      bottom: 22px;
+      left: 16px;
+      right: 16px;
+      min-height: 24px;
+      margin: 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .feedback.good { color: var(--green); }
+    .feedback.bad { color: var(--red); }
+
+    .side { display: grid; grid-template-rows: auto 1fr; gap: 16px; }
+    .side-card { padding: 20px; }
+
+    .side-title {
+      margin: 0 0 17px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .metric {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .metric:first-of-type { border-top: 0; padding-top: 0; }
+    .metric span { color: var(--muted); font-size: 13px; }
+    .metric strong { font: 800 18px/1 ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .metric .accent { color: var(--amber); }
+
+    .round-list { min-height: 176px; }
+
+    .round-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 32px;
+      color: #647086;
+      border-bottom: 1px solid rgba(40, 50, 68, .7);
+      font: 700 12px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .round-row:last-child { border-bottom: 0; }
+    .round-row.recorded { color: var(--ink); }
+    .round-row.recorded span:last-child { color: var(--green); }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .control {
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--ink);
+      background: #151d2a;
+      cursor: pointer;
+      font-weight: 800;
+      transition: border-color .15s, transform .12s, background .15s;
+    }
+
+    .control:hover { border-color: #52617a; background: #1a2433; }
+    .control:active { transform: translateY(1px); }
+    .control.primary { flex: 1; color: #06141a; border-color: var(--cyan); background: var(--cyan); }
+    .control.primary:hover { background: #7de8ff; }
+
+    .hint {
+      margin: 14px 2px 0;
+      color: #647086;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    kbd {
+      padding: 2px 5px;
+      border: 1px solid #38445a;
+      border-bottom-width: 2px;
+      border-radius: 4px;
+      color: var(--muted);
+      background: #111823;
+      font: 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    @keyframes pulse { to { transform: scale(1.035); } }
+    @keyframes shake { 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+    @media (max-width: 720px) {
+      .shell { width: min(100% - 20px, 520px); padding: 22px 0 28px; }
+      header { align-items: center; margin-bottom: 16px; }
+      .best-chip { padding: 9px 10px; font-size: 10px; }
+      .board { grid-template-columns: 1fr; }
+      .game-card { padding: 12px; }
+      .stage { min-height: 380px; }
+      .side { grid-template-columns: 1fr 1fr; grid-template-rows: auto; gap: 10px; }
+      .side-card { padding: 15px; }
+      .round-list { min-height: 160px; }
+      .hint { display: none; }
+    }
+
+    @media (max-width: 430px) {
+      h1 { font-size: 38px; }
+      .eyebrow { font-size: 9px; }
+      .best-chip span { display: none; }
+      .stage { min-height: 345px; }
+      .target { width: 162px; }
+      .target-main { font-size: 21px; }
+      .side-card { padding: 14px 12px; }
+      .metric { padding: 10px 0; }
+      .metric span { font-size: 11px; }
+      .metric strong { font-size: 15px; }
+      .controls { margin-top: 10px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header>
+      <div>
+        <p class="eyebrow">Reaction protocol / 05</p>
+        <h1>Signal Chain</h1>
+      </div>
+      <div class="best-chip"><span>Best average&nbsp; </span><strong id="best-top">—</strong></div>
+    </header>
+
+    <div class="board">
+      <section class="game-card" aria-label="Signal Chain game">
+        <div class="chain" id="chain" aria-label="Round progress"></div>
+        <div class="stage" id="stage" data-testid="stage">
+          <div class="status-label" id="status-label">System idle</div>
+          <button class="target" id="action" data-testid="primary-action" type="button" aria-describedby="feedback">
+            <span class="target-main" id="target-main">STANDBY</span>
+            <span class="target-sub" id="target-sub">PRESS TO TEST</span>
+          </button>
+          <p class="feedback" id="feedback" aria-live="polite">Start a five-link reaction run.</p>
+        </div>
+        <div class="controls">
+          <button class="control primary" id="start" data-testid="start" type="button">Start run</button>
+          <button class="control" id="reset" type="button">Reset</button>
+        </div>
+        <p class="hint">Press the target, <kbd>Space</kbd>, or <kbd>Enter</kbd> only when the signal turns green.</p>
+      </section>
+
+      <aside class="side" aria-label="Run telemetry">
+        <section class="side-card">
+          <h2 class="side-title">Live telemetry</h2>
+          <div class="metric"><span>Progress</span><strong id="progress">0 / 5</strong></div>
+          <div class="metric"><span>Score</span><strong data-testid="score" id="score">0 pts</strong></div>
+          <div class="metric"><span>Average</span><strong id="average">—</strong></div>
+          <div class="metric"><span>Fast combo</span><strong class="accent" id="combo">×0</strong></div>
+          <div class="metric"><span>False starts</span><strong id="false-starts">0</strong></div>
+        </section>
+
+        <section class="side-card">
+          <h2 class="side-title">Round signals</h2>
+          <div class="round-list" id="round-list"></div>
+          <p id="result" data-testid="result" class="feedback" style="position:static; text-align:left; margin-top:12px">Ready for calibration.</p>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const TOTAL_ROUNDS = 5;
+      const FAST_LIMIT = 300;
+      const STORAGE_KEY = 'bench.signalChain.bestAverage';
+      const WAIT_WINDOWS = [[900, 1500], [1200, 2100], [750, 2350], [1050, 2800], [650, 3000]];
+
+      const el = {
+        stage: document.getElementById('stage'),
+        action: document.getElementById('action'),
+        start: document.getElementById('start'),
+        reset: document.getElementById('reset'),
+        status: document.getElementById('status-label'),
+        targetMain: document.getElementById('target-main'),
+        targetSub: document.getElementById('target-sub'),
+        feedback: document.getElementById('feedback'),
+        result: document.getElementById('result'),
+        progress: document.getElementById('progress'),
+        score: document.getElementById('score'),
+        average: document.getElementById('average'),
+        combo: document.getElementById('combo'),
+        falseStarts: document.getElementById('false-starts'),
+        roundList: document.getElementById('round-list'),
+        chain: document.getElementById('chain'),
+        bestTop: document.getElementById('best-top')
+      };
+
+      let state;
+      let timer = 0;
+      let signalStartedAt = 0;
+      let runToken = 0;
+
+      function loadBest() {
+        try {
+          const value = Number(localStorage.getItem(STORAGE_KEY));
+          return Number.isFinite(value) && value > 0 ? value : null;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function initialState() {
+        return {
+          phase: 'ready',
+          score: 0,
+          progress: 0,
+          round: 0,
+          times: [],
+          combo: 0,
+          falseStarts: 0,
+          bestAverage: loadBest()
+        };
+      }
+
+      function saveBest(value) {
+        try { localStorage.setItem(STORAGE_KEY, String(value)); } catch (_) { /* storage may be unavailable */ }
+      }
+
+      function average() {
+        if (!state.times.length) return null;
+        return Math.round(state.times.reduce((sum, time) => sum + time, 0) / state.times.length);
+      }
+
+      function setFeedback(message, tone = '') {
+        el.feedback.textContent = message;
+        el.feedback.className = `feedback ${tone}`.trim();
+      }
+
+      function render() {
+        el.stage.classList.toggle('signal', state.phase === 'signal');
+        el.stage.classList.toggle('false-start', state.phase === 'recovery');
+        el.progress.textContent = `${state.progress} / ${TOTAL_ROUNDS}`;
+        el.score.textContent = `${state.score.toLocaleString()} pts`;
+        el.average.textContent = average() === null ? '—' : `${average()} ms`;
+        el.combo.textContent = `×${state.combo}`;
+        el.falseStarts.textContent = String(state.falseStarts);
+        el.bestTop.textContent = state.bestAverage === null ? '—' : `${state.bestAverage} ms`;
+        el.start.textContent = state.phase === 'ready' ? 'Start run' : 'Restart run';
+
+        const labels = {
+          ready: ['System idle', 'STANDBY', 'PRESS TO TEST'],
+          waiting: [`Link ${state.round + 1} charging`, 'HOLD', 'WAIT FOR GREEN'],
+          signal: [`Link ${state.round + 1} live`, 'CONNECT', 'NOW'],
+          recovery: ['Signal rejected', 'TOO SOON', 'RECOVERING'],
+          'round-result': ['Link secured', `${state.times.at(-1)} MS`, 'VALID SIGNAL'],
+          won: ['Chain complete', 'COMPLETE', `${average()} MS AVG`]
+        };
+        const current = labels[state.phase] || labels.ready;
+        el.status.textContent = current[0];
+        el.targetMain.textContent = current[1];
+        el.targetSub.textContent = current[2];
+        el.action.setAttribute('aria-label', state.phase === 'signal' ? 'Connect signal now' : 'Reaction target: wait for green');
+
+        el.chain.innerHTML = Array.from({ length: TOTAL_ROUNDS }, (_, index) => {
+          const className = index < state.progress ? 'node done' : index === state.round && !['ready', 'won'].includes(state.phase) ? 'node current' : 'node';
+          return `<span class="${className}" aria-hidden="true"></span>`;
+        }).join('');
+
+        el.roundList.innerHTML = Array.from({ length: TOTAL_ROUNDS }, (_, index) => {
+          const time = state.times[index];
+          return `<div class="round-row${time !== undefined ? ' recorded' : ''}"><span>LINK 0${index + 1}</span><span>${time === undefined ? '—' : `${time} ms`}</span></div>`;
+        }).join('');
+      }
+
+      function clearTimer() {
+        window.clearTimeout(timer);
+        timer = 0;
+      }
+
+      function enterSignal() {
+        if (state.phase !== 'waiting') return;
+        state.phase = 'signal';
+        signalStartedAt = performance.now();
+        setFeedback('Signal live — connect now!', 'good');
+        render();
+      }
+
+      function beginRound(immediate = false) {
+        clearTimer();
+        state.phase = 'waiting';
+        const token = runToken;
+        const [minimum, maximum] = WAIT_WINDOWS[state.round];
+        const wait = immediate ? 0 : Math.round(minimum + Math.random() * (maximum - minimum));
+        setFeedback(`Link ${state.round + 1} is charging. Stay ready.`);
+        el.result.textContent = 'Wait for a valid green signal.';
+        render();
+        if (immediate) enterSignal();
+        else timer = window.setTimeout(() => {
+          if (token === runToken && state.phase === 'waiting') enterSignal();
+        }, wait);
+      }
+
+      function startRun() {
+        clearTimer();
+        runToken += 1;
+        const best = loadBest();
+        state = initialState();
+        state.bestAverage = best;
+        el.result.textContent = 'Run active. Build all five links.';
+        beginRound();
+        el.action.focus({ preventScroll: true });
+      }
+
+      function finishRun() {
+        clearTimer();
+        state.phase = 'won';
+        const runAverage = average();
+        const isRecord = state.bestAverage === null || runAverage < state.bestAverage;
+        if (isRecord) {
+          state.bestAverage = runAverage;
+          saveBest(runAverage);
+        }
+        setFeedback('Five links synchronized. Run complete!', 'good');
+        el.result.textContent = isRecord
+          ? `New best average: ${runAverage} ms.`
+          : `Chain complete — ${runAverage} ms average.`;
+        render();
+      }
+
+      function recordReaction(forcedMs) {
+        const elapsed = forcedMs === undefined
+          ? Math.max(1, Math.round(performance.now() - signalStartedAt))
+          : Math.max(1, Math.round(forcedMs));
+        clearTimer();
+        state.times.push(elapsed);
+        state.progress = state.times.length;
+
+        if (elapsed < FAST_LIMIT) {
+          state.combo += 1;
+        } else {
+          state.combo = 0;
+        }
+
+        const speedPoints = Math.max(100, 1000 - elapsed);
+        const comboBonus = state.combo > 0 ? state.combo * 100 : 0;
+        state.score += speedPoints + comboBonus;
+        state.phase = 'round-result';
+        setFeedback(
+          state.combo > 0 ? `${elapsed} ms — fast link! +${comboBonus} combo bonus.` : `${elapsed} ms — link secured.`,
+          'good'
+        );
+        el.result.textContent = `Round ${state.progress}: ${elapsed} ms${comboBonus ? ` · +${comboBonus} bonus` : ''}.`;
+        render();
+
+        if (state.progress >= TOTAL_ROUNDS) {
+          finishRun();
+          return;
+        }
+
+        state.round += 1;
+        const token = runToken;
+        timer = window.setTimeout(() => {
+          if (token === runToken && state.phase === 'round-result') beginRound();
+        }, 850);
+      }
+
+      function falseStart() {
+        clearTimer();
+        state.falseStarts += 1;
+        state.combo = 0;
+        state.phase = 'recovery';
+        setFeedback('False start — link reset. Wait for green.', 'bad');
+        el.result.textContent = `False start ${state.falseStarts}. This round will retry.`;
+        render();
+        const token = runToken;
+        timer = window.setTimeout(() => {
+          if (token === runToken && state.phase === 'recovery') beginRound();
+        }, 900);
+      }
+
+      function primaryAction(forcedMs) {
+        if (state.phase === 'ready' || state.phase === 'won') {
+          startRun();
+          return;
+        }
+        if (state.phase === 'waiting') {
+          falseStart();
+          return;
+        }
+        if (state.phase === 'signal') recordReaction(forcedMs);
+      }
+
+      function resetRun() {
+        clearTimer();
+        runToken += 1;
+        state = initialState();
+        setFeedback('Start a five-link reaction run.');
+        el.result.textContent = 'Ready for calibration.';
+        render();
+      }
+
+      el.start.addEventListener('click', startRun);
+      el.reset.addEventListener('click', resetRun);
+      el.action.addEventListener('click', () => primaryAction());
+      document.addEventListener('keydown', event => {
+        if ((event.code === 'Space' || event.code === 'Enter') && !event.repeat && document.activeElement !== el.start && document.activeElement !== el.reset) {
+          event.preventDefault();
+          primaryAction();
+        }
+      });
+
+      state = initialState();
+      render();
+
+      window.__benchmark = {
+        start: startRun,
+        act: () => primaryAction(),
+        complete: () => {
+          if (state.phase === 'won') return;
+          if (state.phase === 'ready') startRun();
+          clearTimer();
+          while (state.progress < TOTAL_ROUNDS) {
+            if (state.phase !== 'waiting') {
+              state.phase = 'waiting';
+              render();
+            }
+            enterSignal();
+            recordReaction(220 + state.progress * 9);
+            clearTimer();
+            if (state.progress < TOTAL_ROUNDS) beginRound(true);
+          }
+        },
+        reset: resetRun,
+        getState: () => ({
+          phase: state.phase,
+          score: state.score,
+          progress: state.progress,
+          round: state.round,
+          times: [...state.times],
+          average: average(),
+          combo: state.combo,
+          falseStarts: state.falseStarts,
+          bestAverage: state.bestAverage
+        })
+      };
+    })();
+  </script>
+</body>
+</html>

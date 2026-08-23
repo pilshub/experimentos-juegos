@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#09131d">
+  <title>Circuit Mosaic</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand" aria-label="Circuit Mosaic">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span><small>Signal workshop</small><strong>Circuit Mosaic</strong></span>
+      </div>
+      <button class="restart" type="button" data-testid="start" id="startButton">
+        <span class="restart-icon" aria-hidden="true">↻</span><span id="startLabel">Start circuit</span>
+      </button>
+    </header>
+
+    <section class="game-card" aria-labelledby="gameTitle">
+      <div class="intro">
+        <div>
+          <p class="eyebrow">4 × 4 ROTATION GRID</p>
+          <h1 id="gameTitle">Route the current.</h1>
+          <p class="instructions">Rotate every tile until the source powers the full circuit and reaches the receiver.</p>
+        </div>
+        <div class="readouts" aria-label="Game statistics">
+          <div class="readout">
+            <span>Moves</span>
+            <strong data-testid="score" id="moveCount">00</strong>
+          </div>
+          <div class="readout">
+            <span>Time</span>
+            <strong id="timer">00:00</strong>
+          </div>
+          <div class="readout best">
+            <span>Best</span>
+            <strong id="bestScore">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="play-zone" data-testid="stage" id="stage">
+        <div class="terminal source-terminal" aria-hidden="true">
+          <span>SOURCE</span><b></b><i></i>
+        </div>
+        <div class="board-wrap">
+          <div class="board-shade" aria-hidden="true"></div>
+          <div class="board" data-testid="primary-action" id="board" role="group" aria-label="Circuit tile grid"></div>
+        </div>
+        <div class="terminal destination-terminal" aria-hidden="true">
+          <i></i><b></b><span>RECEIVER</span>
+        </div>
+      </div>
+
+      <div class="status-row">
+        <div class="status-copy" aria-live="polite">
+          <span class="status-light" id="statusLight" aria-hidden="true"></span>
+          <div>
+            <strong data-testid="result" id="result">Circuit on standby</strong>
+            <span id="subResult">Press Start circuit to begin</span>
+          </div>
+        </div>
+        <div class="progress-block">
+          <span><b id="poweredCount">0</b> / 16 nodes powered</span>
+          <div class="progress-track" aria-hidden="true"><i id="progressBar"></i></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <span><kbd>Click</kbd> or <kbd>Enter</kbd> to rotate clockwise</span>
+      <span class="legend"><i></i> Live connection</span>
+    </footer>
+  </main>
+
+  <div class="success-overlay" id="successOverlay" aria-hidden="true">
+    <div class="success-ring"><span>✓</span></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

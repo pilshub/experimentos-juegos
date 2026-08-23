@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080914">
+  <title>Pulse Stop</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Pulse Stop home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>PULSE<span>STOP</span></span>
+      </a>
+      <div class="best-pill" aria-label="Best total score">
+        <span>PERSONAL BEST</span>
+        <strong id="bestScore">—</strong><small>/ 300</small>
+      </div>
+    </header>
+
+    <section class="game-card" aria-labelledby="gameTitle">
+      <div class="ambient ambient-one"></div>
+      <div class="ambient ambient-two"></div>
+
+      <div class="game-heading">
+        <div>
+          <p class="eyebrow">REFLEX CALIBRATION</p>
+          <h1 id="gameTitle">Catch the <em>pulse.</em></h1>
+          <p class="lede">Stop the signal at the heart of the target. Three rounds. One steady hand.</p>
+        </div>
+        <div class="round-dial" aria-label="Current round">
+          <svg viewBox="0 0 52 52" aria-hidden="true">
+            <circle class="dial-base" cx="26" cy="26" r="22"></circle>
+            <circle id="dialProgress" class="dial-progress" cx="26" cy="26" r="22"></circle>
+          </svg>
+          <span><b id="roundNumber">0</b><small>/3</small></span>
+        </div>
+      </div>
+
+      <div class="scoreboard">
+        <div class="score-block">
+          <span>TOTAL SCORE</span>
+          <div><strong data-testid="score" id="score">000</strong><small>/ 300</small></div>
+        </div>
+        <div class="round-pips" aria-label="Round scores">
+          <div class="pip" data-round="0"><span>R1</span><b>—</b></div>
+          <div class="pip" data-round="1"><span>R2</span><b>—</b></div>
+          <div class="pip" data-round="2"><span>R3</span><b>—</b></div>
+        </div>
+      </div>
+
+      <div data-testid="stage" id="stage" class="stage" tabindex="0" role="application" aria-label="Timing track. Press Space or tap to stop the marker.">
+        <div class="stage-meta">
+          <span id="roundLabel">SYSTEM READY</span>
+          <span id="speedLabel">AWAITING INPUT</span>
+        </div>
+
+        <div class="track-wrap">
+          <div class="track" id="track">
+            <div class="ticks" aria-hidden="true"></div>
+            <div class="target" id="target" aria-hidden="true">
+              <span class="target-core"></span>
+            </div>
+            <div class="marker" id="marker" aria-hidden="true">
+              <span class="marker-line"></span>
+              <span class="marker-orb"></span>
+            </div>
+            <div class="impact" id="impact" aria-hidden="true"></div>
+          </div>
+          <div class="track-labels" aria-hidden="true"><span>0</span><span>SYNC WINDOW</span><span>100</span></div>
+        </div>
+
+        <div class="feedback" id="feedback" aria-live="polite">
+          <span class="feedback-icon" aria-hidden="true">⌁</span>
+          <div>
+            <strong data-testid="result" id="result">Ready when you are</strong>
+            <small id="resultDetail">Launch the sequence to begin</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button data-testid="primary-action" id="primaryAction" class="primary-action" type="button" disabled>
+          <span class="button-orbit" aria-hidden="true"></span>
+          <span id="actionText">STOP PULSE</span>
+          <kbd>SPACE</kbd>
+        </button>
+        <button data-testid="start" id="startButton" class="start-button" type="button">
+          <span id="startText">START SEQUENCE</span><span aria-hidden="true">↗</span>
+        </button>
+      </div>
+
+      <p class="hint"><span>●</span> Tap anywhere on the track, use the stop button, or press Space</p>
+    </section>
+
+    <footer><span>PRECISION TRAINING / 03</span><span>NO SECOND CHANCES. ONLY BETTER TIMING.</span></footer>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
